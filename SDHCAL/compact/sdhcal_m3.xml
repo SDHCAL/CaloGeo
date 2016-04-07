@@ -1,0 +1,110 @@
+<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0" 
+       xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+
+	<info name="CALICE_SDHCAL_M3"
+	      title="CALICE SDHCAL prototype "
+	      author="R. Ete"
+	      url="https://github.com/SDHCAL"
+	      status="development"
+	      version="$Id: dd_sdhcal.xml Ete $">
+		<comment>The compact format for the CALICE SDHCAL m3 testbeam model</comment>        
+	</info>
+  
+	<includes>
+		<gdmlFile  ref="elements.xml"/>
+		<gdmlFile  ref="materials.xml"/>
+		<!-- <pyBuilder ref="../drivers"/> -->
+	</includes>
+  
+	<define>
+		<constant name="world_side"    value="10*m"/>
+		<constant name="world_x"       value="world_side/2"/>
+		<constant name="world_y"       value="world_side/2"/>
+		<constant name="world_z"       value="world_side/2"/>        
+		
+		<constant name="globalX"       value="0.0*mm"/>
+		<constant name="globalY"       value="0.0*mm"/>
+		<constant name="globalZ"       value="3000.0*mm"/>
+		
+		<constant name="n_layers"            value="48"/>
+		<constant name="rpc_thickness"       value="6.131*mm"/>
+		<constant name="absorber_thickness"  value="2.0*mm"/>
+		<constant name="layer_thickness"  value="rpc_thickness+absorber_thickness"/>
+		
+		<constant name="calor_size_x"  value="1008.0*mm"/>
+		<constant name="calor_size_y"  value="1008.0*mm"/>
+		<constant name="calor_size_z"  value="n_layers*layer_thickness"/>
+	</define>
+
+	<limits>
+		<limitset name="cal_limits">
+			<limit name="step_length_max" particles="*" value="10.0" unit="mm" />
+		</limitset>
+	</limits>
+
+	<display>
+		<vis name="SDHcalVis"          alpha="1" r="1"    g="1"    b="0.1"  showDaughters="true" visible="false"/>
+		<vis name="SDHcalRadiatorVis"  alpha="1" r="0.69" g="0.77" b="0.87" showDaughters="true" visible="true"/>
+		<vis name="SDHcalLayerVis"     alpha="1" r="1"    g="0"    b="0.5"  showDaughters="true" visible="true"/>
+		<vis name="SDHcalSensorVis"    alpha="1" r="0"    g="1"    b="1"    showDaughters="true" visible="true"/>
+		<vis name="SDHcalG10Vis"       alpha="1" r="0.44" g="0.77" b="0.44" showDaughters="true" visible="true"/>
+		<vis name="SDHcalMylarVis"     alpha="1" r="1"    g="1"    b="0"    showDaughters="true" visible="true"/>
+		<vis name="SDHcalCarbonVis"    alpha="1" r="0"    g="0"    b="0"    showDaughters="true" visible="true"/>
+		<vis name="SDHcalGlassVis"     alpha="1" r="0"    g="1"    b="0"    showDaughters="true" visible="true"/>
+		<vis name="SDHcalAirVis"       alpha="1" r="1"    g="1"    b="1"    showDaughters="true" visible="true"/>
+	</display>
+
+  
+	<detectors>
+		<detector id="1" name="SDHcal" type="SDHcal_detector" readout="SDHcalHits" vis="SDHcalVis" calorimeterType="HCAL">
+			<comment>Semi Digital Hadron Calorimeter Prototype</comment>
+			
+			<!-- detector online alignment -->
+			<dimensions x="calor_size_x" y="calor_size_y" z="calor_size_z"/>
+			
+			<!-- Global position and rotation -->
+			<position x="globalX" y="globalY" z="globalZ"/>
+			<rotation x="0" y="0" z="0"/>
+			      
+			<layers>
+				<!-- Additionnal absorber in front of calori -->
+				<layer repeat="1">
+					<slice material = "Steel235"    thickness = "1.75*cm"  vis="SDHcalRadiatorVis" />
+				</layer>
+					<layer repeat="48">
+					<!-- Steel absorber -->
+					<slice material = "Steel235"      thickness = "20.0*mm" vis="SDHcalRadiatorVis" />
+					<!-- Electronics -->
+					<slice material = "Vacuum"        thickness = "1.6*mm"  vis="SDHcalSensorVis" />
+					<!-- PCB -->
+					<slice material = "Vacuum"        thickness = "1.2*mm"  vis="SDHcalSensorVis" />
+					<!-- Mylar anode -->
+					<slice material = "Mylar"         thickness =  "0.05*mm" vis="SDHcalMylarVis" />
+					<!-- Mylar cathode -->
+					<slice material = "Mylar"         thickness =  "0.180*mm" vis="SDHcalMylarVis" />	  
+					<!-- Graphite anode -->
+					<slice material = "Graphite"      thickness =  "0.05*mm" vis="SDHcalCarbonVis" />
+					<!-- Graphite cathode -->
+					<slice material = "Graphite"      thickness =  "0.05*mm" vis="SDHcalCarbonVis" />
+					<!-- Thin glass -->
+					<slice material = "PyrexGlass"    thickness = "0.7*mm" vis="SDHcalGlassVis" />
+					<!-- Thick glass -->
+					<slice material = "PyrexGlass"    thickness = "1.1*mm" vis="SDHcalGlassVis" />
+					<!-- Gaz gap -->
+					<slice material = "GRPCGas"       thickness = "1.2*mm" vis="SDHcalSensorVis" />
+					<!-- Remaining space in layer -->
+					<slice material = "Vacuum"        thickness = "0.001*mm" vis="SDHcalAirVis" />
+				</layer>
+			</layers>
+		</detector>
+	</detectors>
+
+	<readouts>
+		<readout name="SDHcalHits">
+			<segmentation type="SDHCALSegmentation" grid_size_x="10.0*mm" grid_size_y="10.0*mm" />
+			<id>system:6,module:7,layer:8,slice:5,x:32:-16,y:-16</id>
+		</readout>
+	</readouts>
+
+</lccdd>
